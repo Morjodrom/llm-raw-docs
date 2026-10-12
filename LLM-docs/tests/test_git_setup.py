@@ -19,7 +19,9 @@ def copy_sources(destination):
                  and name != "LLM-docs/distribution/requirements.hashed.txt"]
     else:
         files = subprocess.check_output(["git", "ls-files"], cwd=ROOT, text=True).splitlines()
-    files += ["setup.sh", "requirements.txt", "LLM-docs/scripts/git_setup.py"]
+    files += ["setup.sh", "requirements.txt", "drive-docs.sh", "LLM-docs/scripts/git_setup.py",
+              "LLM-docs/scripts/workflow_run.py", "LLM-docs/scripts/drive_docs.py",
+              "LLM-docs/scripts/drive-requirements.lock"]
     for name in set(files):
         source = ROOT / name
         target = destination / name
@@ -44,6 +46,17 @@ def clone():
         root = folder / "clone"
         root.mkdir()
         copy_sources(root)
+        # Source setup now needs source-only OAuth wheels too. Never download
+        # during this offline provisioning regression suite.
+        extra = os.environ.get('LOCAL_DOCS_TEST_DRIVE_WHEELHOUSE')
+        if not extra:
+            pytest.skip('offline setup tests require LOCAL_DOCS_TEST_DRIVE_WHEELHOUSE with source-only OAuth wheels')
+        wheels = folder / 'source-wheels'
+        wheels.mkdir()
+        for base in (ROOT / 'LLM-docs/distribution/wheelhouse', Path(extra)):
+            for path in base.iterdir():
+                if path.suffix == '.whl':
+                    (wheels / path.name).symlink_to(path)
         assert not (root / "LLM-docs/distribution/wheelhouse").exists()
         yield root, folder
 
@@ -59,9 +72,10 @@ def test_missing_setup_does_not_install_online(clone):
 
 def test_one_command_setup_then_unactivated_runtime(clone):
     root, folder = clone
-    result = invoke(root, "setup.sh", "--offline", "--wheelhouse", str(ROOT / "LLM-docs/distribution/wheelhouse"))
+    result = invoke(root, "setup.sh", "--offline", "--wheelhouse", str(folder / "source-wheels"))
     assert result.returncode == 0, result.stderr
     assert "No activation or exports needed" in result.stdout
+    assert invoke(root, 'drive-docs.sh', '--help').returncode == 0
     source = folder / "export"
     original = (source / "guide.md").read_bytes()
     result = invoke(root, "local-docs.sh", "update", "--input", str(source))
@@ -81,7 +95,7 @@ def test_changed_requirements_block_runtime_until_explicit_setup(clone):
     requirements.write_text(requirements.read_text() + "# refreshed\n")
     result = invoke(root, "local-docs.sh", "status", "--input", str(folder / "export"))
     assert result.returncode == 2 and "bash setup.sh" in result.stderr
-    result = invoke(root, "setup.sh", "--offline", "--wheelhouse", str(ROOT / "LLM-docs/distribution/wheelhouse"))
+    result = invoke(root, "setup.sh", "--offline", "--wheelhouse", str(folder / "source-wheels"))
     assert result.returncode == 0, result.stderr
     assert invoke(root, "local-docs.sh", "status", "--input", str(folder / "export")).returncode == 0
 
@@ -97,7 +111,7 @@ def test_incomplete_install_and_lock_are_explicit(clone):
     ready.write_text("{partial")
     result = invoke(root, "local-docs.sh", "status", "--input", str(folder / "export"))
     assert result.returncode == 2 and "bash setup.sh" in result.stderr
-    result = invoke(root, "setup.sh", "--offline", "--wheelhouse", str(ROOT / "LLM-docs/distribution/wheelhouse"))
+    result = invoke(root, "setup.sh", "--offline", "--wheelhouse", str(folder / "source-wheels"))
     assert result.returncode == 0, result.stderr
 
 
@@ -120,8 +134,21 @@ def test_moved_clone_requires_setup_then_works(clone):
         source = folder / "export"
         result = invoke(moved, "local-docs.sh", "update", "--input", str(source))
         assert result.returncode == 2 and "bash setup.sh" in result.stderr
-        result = invoke(moved, "setup.sh", "--offline", "--wheelhouse", str(ROOT / "LLM-docs/distribution/wheelhouse"))
+        result = invoke(moved, "setup.sh", "--offline", "--wheelhouse", str(folder / "source-wheels"))
         assert result.returncode == 0, result.stderr
         assert invoke(moved, "local-docs.sh", "update", "--input", str(source)).returncode == 0
     finally:
         moved.rename(root)
+
+
+def test_source_connector_lock_changes_invalidate_setup(clone):
+    root, folder = clone
+    result = invoke(root, 'setup.sh', '--offline', '--wheelhouse', str(folder / 'source-wheels'))
+    assert result.returncode == 0, result.stderr
+    assert invoke(root, 'drive-docs.sh', '--help').returncode == 0
+    lock = root / 'LLM-docs/scripts/drive-requirements.lock'
+    lock.write_text(lock.read_text() + '# fingerprint change\n')
+    result = invoke(root, 'drive-docs.sh', 'refresh', '--folder', 'root')
+    assert result.returncode == 2
+    assert json.loads(result.stdout)['workflow'] == 'not_run'
+    assert 'bash setup.sh' in result.stderr

@@ -1,2 +1,5 @@
 # Shared pinned dependencies for docnorm, docsearch, and development tests.
 -r LLM-docs/distribution/requirements.lock
+
+# Google Drive connector (source checkout only).
+-r LLM-docs/scripts/drive-requirements.lock
