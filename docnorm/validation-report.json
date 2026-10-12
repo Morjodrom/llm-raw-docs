@@ -1,0 +1,23 @@
+{
+  "asset_provenance_validated": 245,
+  "catalog_links_validated": 1034,
+  "document_ids_stable": true,
+  "docx_text_runs_retained": 414,
+  "file_status_counts": {
+    "asset": 461,
+    "converted": 733,
+    "failed": 19,
+    "merged": 610,
+    "partial": 56,
+    "skipped": 72
+  },
+  "manifest_complete": true,
+  "normalization_report": "/Users/mediator/survival-docs/normalized/report.json",
+  "partial_documents": 56,
+  "provenance_documents_validated": 789,
+  "rerun_byte_identical": true,
+  "rewritten_links_validated": 1592,
+  "source_file_count": 1951,
+  "source_files_unchanged": true,
+  "xlsx_worksheets_retained": 3
+}

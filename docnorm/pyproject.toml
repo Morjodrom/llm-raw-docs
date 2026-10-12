@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools==80.9.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "docnorm"
+version = "0.1.0"
+description = "Offline, traceable documentation normalization"
+requires-python = ">=3.11"
+dependencies = [
+  "markitdown[docx,xlsx]==0.1.4",
+  "beautifulsoup4==4.14.3",
+  "markdown-it-py==4.0.0",
+  "openpyxl==3.1.5",
+  "charset-normalizer==3.5.2",
+]
+
+[project.optional-dependencies]
+test = ["pytest==8.4.2"]
+
+[project.scripts]
+docnorm = "docnorm.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
