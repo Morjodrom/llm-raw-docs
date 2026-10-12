@@ -25,7 +25,7 @@ def source():
     with tempfile.TemporaryDirectory(prefix="docs тест ", dir="/private/tmp") as folder:
         path = Path(folder)
         yield path
-        key = hashlib.sha256(os.fsencode(str(path))).hexdigest()
+        key = hashlib.sha256(os.fsencode(str(ROOT)) + b"\0" + os.fsencode(str(path))).hexdigest()
         shutil.rmtree(ROOT / "LLM-docs" / "runtime" / key, ignore_errors=True)
 
 
@@ -164,5 +164,10 @@ with patch.object(runpy, "run_path", probe):
 
 def test_project_skill_link_resolves_to_source():
     link = ROOT / ".agents/skills/local-docs-search"
-    assert link.is_symlink()
-    assert (link / "SKILL.md").resolve() == ROOT / "LLM-docs/skills/local-docs-search/SKILL.md"
+    assert (link / "SKILL.md").is_file()
+    if link.is_symlink():
+        assert (link / "SKILL.md").resolve() == ROOT / "LLM-docs/skills/local-docs-search/SKILL.md"
+    else:
+        # ZIP discovery is materialized so generic unzip does not need symlinks.
+        assert "name: local-docs-search" in (link / "SKILL.md").read_text()
+        assert (link / "../../../LLM-docs/README.md").resolve().is_file()

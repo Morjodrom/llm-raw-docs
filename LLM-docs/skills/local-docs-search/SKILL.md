@@ -1,13 +1,18 @@
 ---
 name: local-docs-search
-description: Search and quote this project's local documentation exports offline using docnorm and docsearch. Use for local documentation questions, section retrieval, and on-demand index updates; not for source-code navigation or remote documentation.
+description: Search and quote local documentation exports offline using docnorm and docsearch. Use for local documentation questions, section retrieval, and on-demand index updates; not for source-code navigation or remote documentation.
 ---
 
 # Local documentation search
 
 Run commands from the repository root (or use the absolute script path). Read
 [the workflow guide](../../README.md) for setup, reports, recovery, and limitations.
-Use `LLM-docs/local-docs.sh` for this project's local document research.
+Use the root `local-docs.sh` launcher for distributed bundles; it provisions a
+shared environment offline from included wheels on first use. In the source
+repository, `LLM-docs/local-docs.sh` also supports pre-provisioned tool environments.
+Resolve the bundle root from this skill location and invoke its script by absolute
+path when the working directory is elsewhere. Read `INSTALL.md` at the bundle
+root for Python/platform prerequisites and first-use provisioning.
 
 1. Select the export folder explicitly. The current example is
    `drive-download-20261012T111012Z-1-001/`; never assume future names. If the
@@ -15,8 +20,9 @@ Use `LLM-docs/local-docs.sh` for this project's local document research.
    relative to the shell's working directory, not the skill folder.
 2. Run `status --input "EXPORT"` to inspect the last completed snapshot. If it
    is absent, the user requests refresh, or the source export changed, launch
-   `update --input "EXPORT"`. It runs normalization **before** indexing. No pip
-   install, remote fetching, or document execution is permitted at runtime.
+   `update --input "EXPORT"`. It runs normalization **before** indexing. The root launcher may provision dependencies locally before the document
+   workflow starts; no pip install, remote fetching, or document execution is
+   permitted inside the document workflow.
    Exit 1 means a usable but partial snapshot: inspect the JSON report and
    `normalization_report`, disclose gaps relevant to the question. Exit 2 means
    stop and report setup/fatal failure, not a usable refresh. Do not silently use

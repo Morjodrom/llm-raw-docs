@@ -1,3 +1,9 @@
 /runtime/
 /tests/__pycache__/
 /.pytest_cache/
+/dist/
+/distribution/wheelhouse/
+/distribution/wheelhouse.json
+/distribution/requirements.hashed.txt
+/distribution/__pycache__/
+/distribution/.build.lock/

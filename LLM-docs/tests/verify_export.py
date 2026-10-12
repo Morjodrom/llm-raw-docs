@@ -11,7 +11,7 @@ import time
 from datetime import datetime, timezone
 
 ROOT = Path(__file__).resolve().parents[2]
-SCRIPT = ROOT / "LLM-docs/local-docs.sh"
+SCRIPT = ROOT / "local-docs.sh" if (ROOT / "local-docs.sh").is_file() else ROOT / "LLM-docs/local-docs.sh"
 
 
 def source_snapshot(source):
@@ -104,7 +104,7 @@ def main():
         "parent_retrieved": parent is not None,
         "additional_mode_results": {"literal_dash_query": len(literal["results"]), "advanced": len(advanced["results"]), "plain_any": len(any_query["results"])},
         "runtime_network_guard": "actual launcher probe tested in test_workflow.py; not an OS sandbox",
-        "skill_validation": "quick_validate.py unavailable: PyYAML missing in tool and bundled environments; manually checked frontmatter, naming, links, and scope",
+        "skill_validation": "run separately with skill-creator quick_validate.py; see distribution verification report",
         "native_skill_discovery": "relative project skill link verified; automatic client inventory reload not tested",
     }
     target = ROOT / "LLM-docs/test-results.json"

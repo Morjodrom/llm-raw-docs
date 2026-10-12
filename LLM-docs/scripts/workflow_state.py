@@ -26,7 +26,9 @@ def main():
         raise ValueError(f"input must be an existing export directory: {source}")
     if source == runtime or source in runtime.parents or runtime in source.parents:
         raise ValueError("input and LLM-docs/runtime must not overlap")
-    key = hashlib.sha256(os.fsencode(str(source))).hexdigest()
+    # Bind state to both absolute locations. A moved bundle must never reuse
+    # an index whose normalized-root metadata points to its old directory.
+    key = hashlib.sha256(os.fsencode(str(root)) + b"\0" + os.fsencode(str(source))).hexdigest()
     state = checked(runtime / key)
     # Inspect managed destinations before any command can write through them.
     for name in ("normalized", "search.sqlite", "normalize-summary.json", "index-report.json", "ready.json", ".lock"):

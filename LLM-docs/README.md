@@ -7,6 +7,22 @@ both CLI processes; no installers, remote APIs, embeddings, OCR, JavaScript,
 formulas, or document commands run. This guard is defense-in-depth for trusted
 local tools, not an OS security sandbox for arbitrary executable code.
 
+## Shareable distribution
+
+From the source tree run `bash LLM-docs/build-distribution.sh` (Python 3.13,
+macOS 14+ ARM64). First build downloads pinned wheels; `--offline` uses the
+validated cache. The ZIP contains current editable sources, a discoverable skill,
+and a hashed wheelhouse, but no exports or generated state. The recipient unzips
+and runs root `bash local-docs.sh update --input "/absolute/export"`; the first
+launch provisions one shared environment offline automatically. Use root launcher
+for search/read too. See [installation and rebuilding](distribution/INSTALL.md).
+
+One shared environment is preferable: dependencies resolve together, and the
+only different pin is setuptools, unified at 80.9.0. A new installable aggregate
+Python package isn't necessary: loading the editable source tree preserves the
+existing modules and applies edits immediately. The original two-environment
+wrapper remains supported for development. Existing environments are never zipped.
+
 ## Quick start
 
 From the repository root, with the existing environments:
@@ -25,9 +41,11 @@ LLM-docs/local-docs.sh read --input "$EXPORT" SECTION_ID
 For future exports, replace `EXPORT` with the explicit directory path. Paths
 containing spaces work when quoted. Relative input paths resolve against the
 caller; the script itself can be invoked by absolute path from anywhere.
-Different absolute export paths get separate SHA-256-named state directories.
+Each pair of absolute bundle/export paths gets a separate SHA-256-named state directory.
 Moving an export or this repository therefore creates a new state directory on
-next update; do not rebind an unrelated old database. The original sibling
+next update; do not rebind an unrelated old database. The distribution now hashes
+both bundle and export paths; snapshots created with the older export-only key
+remain untouched and require a new update in the new namespace. The original sibling
 `normalized/` and `docsearch/artifacts/` are not used or changed.
 
 Additional searches (JSON by default):
@@ -63,11 +81,8 @@ docnorm/.venv/bin/python -m pip install --no-index --find-links /path/to/wheels 
 docsearch/.venv/bin/python -m pip install --no-index --find-links /path/to/wheels -r docsearch/requirements.txt
 ```
 
-The skill-creator validator was attempted but cannot run: PyYAML is absent in
-both project environments and the bundled runtime, with no cached wheel found.
-Frontmatter was parsed successfully with Ruby YAML; naming, scope, and
-reference/link resolution were checked manually;
-this is not a substitute for a completed official validator run.
+The distribution skill is validated with skill-creator's `quick_validate.py`.
+PyYAML is a development-only validator dependency, not required by the runtime.
 
 The wrapper imports docnorm directly from its local `src/`; an editable install
 is unnecessary. It invokes docsearch's existing `cli.py`, retaining all sibling
@@ -78,7 +93,7 @@ limitations. Missing dependencies are explicit failures, not fallback search.
 ## State, provenance, updates, and failures
 
 ```text
-runtime/<hash-of-absolute-export-path>/
+runtime/<hash-of-bundle-and-export-paths>/
   normalized/             # complete docnorm-owned collection
     documents/<id>/content.md + provenance.json
     assets/, manifest.jsonl, roots.json, llms.txt, report.json, ownership journal
