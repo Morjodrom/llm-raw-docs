@@ -118,6 +118,8 @@ def main():
                          "LLM-docs/distribution/requirements.hashed.txt", "LLM-docs/distribution/wheelhouse.json"):
             add(root / relative)
         tree("LLM-docs/distribution/wheelhouse")
+        if (root / "ReadMe.md").is_file():
+            add(root / "ReadMe.md")
         guide = (bundle / "INSTALL.md").read_bytes()
         files["INSTALL.md"] = guide
         files["LLM-docs/distribution/INSTALL.md"] = guide

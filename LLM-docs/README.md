@@ -1,4 +1,4 @@
-# Local documentation workflow
+# llm-raw-docs: local documentation workflow
 
 `local-docs.sh` combines the existing **docnorm normalize → docsearch index →
 search → read** CLIs. It does not change either tool or any source export. All
@@ -6,6 +6,27 @@ workflow files and generated state live here. Python networking is blocked in
 both CLI processes; no installers, remote APIs, embeddings, OCR, JavaScript,
 formulas, or document commands run. This guard is defense-in-depth for trusted
 local tools, not an OS security sandbox for arbitrary executable code.
+
+## Preferred usage: LLM-assisted documentation research
+
+For most users, the preferred interface is an LLM assistant—not manual CLI
+commands. Start with the [repository README](../ReadMe.md) for prerequisites,
+ZIP/clone setup, and an example prompt. Give the assistant an explicit export
+path and your question; ask it to read root `AGENTS.md` and load the
+[local-docs-search skill](skills/local-docs-search/SKILL.md).
+
+The assistant checks the snapshot, updates when needed, searches, reads full
+sections and parent context, then answers with provenance-based citations and
+coverage warnings. For a source clone, use `LLM-docs/local-docs.sh` with the
+shared development environment configured as described in the repository README;
+no ZIP build is required. For a ZIP (or a checkout with a built wheelhouse), use
+the root `local-docs.sh` launcher. All document operations remain offline;
+your assistant/model has its own connectivity and privacy policy. Retrieved
+excerpts may leave your machine through that assistant, so choose an approved
+or local model for confidential exports. If skill discovery is unavailable,
+explicitly load the skill file; no global registration is required.
+
+The remaining sections document the CLI alternative and development details.
 
 ## Shareable distribution
 
@@ -23,7 +44,7 @@ Python package isn't necessary: loading the editable source tree preserves the
 existing modules and applies edits immediately. The original two-environment
 wrapper remains supported for development. Existing environments are never zipped.
 
-## Quick start
+## Manual CLI usage (alternative)
 
 From the repository root, with the existing environments:
 
@@ -62,7 +83,7 @@ Arguments following the input pass through to the existing search/read CLI;
 is FTS5 syntax without lemmatization. `--limit` defaults to 10 (range 1–1000).
 Read sections before quoting them. Search results can include verbose provenance.
 
-## Provisioning (separate from runtime)
+## Development provisioning (separate from runtime)
 
 Requires Bash 3.2+, Python >=3.11,<3.15, SQLite FTS5, and the pinned tool
 requirements, including local Russian dictionaries. Defaults use
