@@ -1,0 +1,98 @@
+{
+  "documents": 1000,
+  "corpus_bytes": 8523010,
+  "sections": 9000,
+  "database_bytes": 37842944,
+  "initialization_seconds": 0.07404345809482038,
+  "index_seconds": 3.335929916938767,
+  "unchanged_index_seconds": 0.10871437494643033,
+  "index_report": {
+    "indexed": 1000,
+    "unchanged": 0,
+    "metadata_updated": 0,
+    "deleted": 0,
+    "sections": 9000,
+    "stale_documents": 0,
+    "failures": [],
+    "skipped_symlinks": [],
+    "processing_rebuilt": false,
+    "rolled_back": false
+  },
+  "unchanged_report": {
+    "indexed": 0,
+    "unchanged": 1000,
+    "metadata_updated": 0,
+    "deleted": 0,
+    "sections": 9000,
+    "stale_documents": 0,
+    "failures": [],
+    "skipped_symlinks": [],
+    "processing_rebuilt": false,
+    "rolled_back": false
+  },
+  "query_p50_ms": 13.540625455789268,
+  "query_p95_ms": 69.45479195564985,
+  "query_samples": 180,
+  "queries": [
+    {
+      "query": "ошибки подключения",
+      "mode": "plain",
+      "match": "all",
+      "results": 10,
+      "p50_ms": 8.00641649402678,
+      "p95_ms": 8.257207926362753
+    },
+    {
+      "query": "HTTPClient config.user_id",
+      "mode": "plain",
+      "match": "all",
+      "results": 10,
+      "p50_ms": 17.706812475807965,
+      "p95_ms": 20.299250027164817
+    },
+    {
+      "query": "таймаутов конфигураций",
+      "mode": "plain",
+      "match": "all",
+      "results": 10,
+      "p50_ms": 8.986500557512045,
+      "p95_ms": 12.083249865099788
+    },
+    {
+      "query": "unknown connection",
+      "mode": "plain",
+      "match": "any",
+      "results": 10,
+      "p50_ms": 15.258020488545299,
+      "p95_ms": 16.181458020582795
+    },
+    {
+      "query": "body:\"retry connection\"",
+      "mode": "advanced",
+      "match": "all",
+      "results": 10,
+      "p50_ms": 9.31866595055908,
+      "p95_ms": 9.689915925264359
+    },
+    {
+      "query": "--db /data/search.sqlite",
+      "mode": "literal",
+      "match": "all",
+      "results": 10,
+      "p50_ms": 68.1910834973678,
+      "p95_ms": 72.51120801083744
+    }
+  ],
+  "environment": {
+    "python": "3.13.10 (main, Dec  2 2025, 12:49:50) [Clang 17.0.0 (clang-1700.4.4.1)]",
+    "platform": "macOS-15.7.9-arm64-arm-64bit-Mach-O",
+    "sqlite": "3.51.1",
+    "dependencies": {
+      "markdown-it-py": "4.0.0",
+      "pymorphy3": "2.0.6",
+      "pymorphy3-dicts-ru": "2.4.417150.4580142"
+    }
+  },
+  "work_directory": "/Users/mediator/survival-docs/docsearch/artifacts/benchmark-iolval1g",
+  "notes": "Warmed, in-process queries; initialization measured separately; literal mode scans all sections."
+}

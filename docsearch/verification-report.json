@@ -1,0 +1,81 @@
+{
+  "source_root": "/Users/mediator/survival-docs/normalized",
+  "source_files_unchanged": 1829,
+  "index_report": {
+    "indexed": 789,
+    "unchanged": 0,
+    "metadata_updated": 0,
+    "deleted": 0,
+    "sections": 7284,
+    "stale_documents": 0,
+    "failures": [],
+    "skipped_symlinks": [],
+    "processing_rebuilt": false,
+    "rolled_back": false
+  },
+  "rerun_report": {
+    "indexed": 0,
+    "unchanged": 789,
+    "metadata_updated": 0,
+    "deleted": 0,
+    "sections": 7284,
+    "stale_documents": 0,
+    "failures": [],
+    "skipped_symlinks": [],
+    "processing_rebuilt": false,
+    "rolled_back": false
+  },
+  "index_seconds": 5.378550375113264,
+  "acceptance_query": "ошибки подключения",
+  "result_count": 10,
+  "cli_index_report": {
+    "indexed": 0,
+    "unchanged": 789,
+    "metadata_updated": 0,
+    "deleted": 0,
+    "sections": 7284,
+    "stale_documents": 0,
+    "failures": [],
+    "skipped_symlinks": [],
+    "processing_rebuilt": false,
+    "rolled_back": false
+  },
+  "cli_api_parity": true,
+  "module_entrypoint_parity": true,
+  "external_app_index_search_read": true,
+  "all_section_line_ranges_verified": 7284,
+  "runtime_network_blocked": true,
+  "work_directory": "/Users/mediator/survival-docs/docsearch/artifacts/validation-sndxbxel",
+  "first_result_preview": {
+    "section_id": "95f4b941d2e3ec95a3182335287e0ef7",
+    "document_id": "1e93c3b5f9a1ee668bfb0640",
+    "title": "Мониторинг pay-transactions",
+    "heading_path": [
+      "Мониторинг pay-transactions",
+      "Ключевые технические метрики",
+      "Метрики Postgres"
+    ],
+    "relative_path": "documents/1e93c3b5f9a1ee668bfb0640/content.md",
+    "start_line": 93,
+    "end_line": 107,
+    "matched_representation": "both",
+    "stale": false,
+    "excerpt": "…собираются:\n\n* количество активных/ожидающих соединений;\n* задержка запросов;\n* ошибки подключения и таймауты;\n* время acquire‑а соединения из пула.\n\nДополнительно, благодаря `otelpgx`:\n\n* каждая SQL‑операция попадает в OTEL‑трейсы, что позволяет строить дашборды по latency и ошибкам запросов.\n\n<a id=\"dashbordy\"></a>\n\n"
+  },
+  "tests": {
+    "passed": 44,
+    "duration_seconds": 2.32,
+    "output": "artifacts/tests-output.txt"
+  },
+  "dependency_check": "No broken requirements found.",
+  "environment": {
+    "python": "3.13.10 (main, Dec  2 2025, 12:49:50) [Clang 17.0.0 (clang-1700.4.4.1)]",
+    "platform": "macOS-15.7.9-arm64-arm-64bit-Mach-O",
+    "sqlite": "3.51.1",
+    "dependencies": {
+      "markdown-it-py": "4.0.0",
+      "pymorphy3": "2.0.6",
+      "pymorphy3-dicts-ru": "2.4.417150.4580142"
+    }
+  }
+}
