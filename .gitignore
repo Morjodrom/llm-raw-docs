@@ -1,2 +1,37 @@
+# OS metadata
+.DS_Store
+
+# Python environments, caches and build artifacts
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+
+# Local offline provisioning
 /.local-docs-env/
 /.local-docs-install.lock/
+
+# Raw documentation downloads (not distributable source code)
+/drive-download-*/
+/drive-download-*.zip
+
+# Generated documentation collections and navigation
+/normalized/
+/FULL_HEADING_INDEX.md
+/TABLE_OF_CONTENTS.md
+
+# Generated SQLite indexes and their journals
+*.sqlite
+*.sqlite3
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite-journal
+*.sqlite3-wal
+*.sqlite3-shm
+*.sqlite3-journal
