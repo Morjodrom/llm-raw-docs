@@ -1,0 +1,61 @@
+{
+  "verified_at": "2026-10-12T13:33:04.971387+00:00",
+  "input": "/Users/mediator/survival-docs/drive-download-20261012T111012Z-1-001",
+  "source_files_hashed": 1951,
+  "source_unchanged": true,
+  "documents": 789,
+  "sections": 7284,
+  "all_section_slices_verified": true,
+  "all_document_provenance_verified": true,
+  "normalization_file_statuses": {
+    "asset": 461,
+    "converted": 733,
+    "failed": 19,
+    "merged": 610,
+    "partial": 56,
+    "skipped": 72
+  },
+  "normalization_partial_documents": 56,
+  "first_update_exit": 1,
+  "rerun_update_exit": 1,
+  "first_update_seconds": 30.024,
+  "rerun_update_seconds": 32.139,
+  "rerun_index": {
+    "indexed": 0,
+    "unchanged": 789,
+    "metadata_updated": 0,
+    "deleted": 0,
+    "sections": 7284,
+    "stale_documents": 0,
+    "failures": [],
+    "skipped_symlinks": [],
+    "processing_rebuilt": false,
+    "rolled_back": false
+  },
+  "query": "ошибки подключения",
+  "query_result_count": 5,
+  "search_seconds": 0.161,
+  "read_seconds": 0.147,
+  "retrieved_section": {
+    "section_id": "95f4b941d2e3ec95a3182335287e0ef7",
+    "title": "Мониторинг pay-transactions",
+    "heading_path": [
+      "Мониторинг pay-transactions",
+      "Ключевые технические метрики",
+      "Метрики Postgres"
+    ],
+    "relative_path": "documents/1e93c3b5f9a1ee668bfb0640/content.md",
+    "start_line": 93,
+    "end_line": 107,
+    "stale": false
+  },
+  "parent_retrieved": true,
+  "additional_mode_results": {
+    "literal_dash_query": 0,
+    "advanced": 10,
+    "plain_any": 10
+  },
+  "runtime_network_guard": "actual launcher probe tested in test_workflow.py; not an OS sandbox",
+  "skill_validation": "quick_validate.py unavailable: PyYAML missing in tool and bundled environments; manually checked frontmatter, naming, links, and scope",
+  "native_skill_discovery": "relative project skill link verified; automatic client inventory reload not tested"
+}
