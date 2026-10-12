@@ -24,6 +24,31 @@ def pip_env():
     return env
 
 
+def validate_environment(python, root):
+    probe = '''
+import os, socket, sys, sqlite3
+from pathlib import Path
+def denied(*args, **kwargs):
+    raise RuntimeError("local-docs: provisioning probe network access forbidden")
+socket.socket.connect = denied
+socket.socket.connect_ex = denied
+socket.create_connection = denied
+socket.getaddrinfo = denied
+os.environ["ORT_DISABLE_TELEMETRY"] = "1"
+sys.path[:0] = [str(Path(sys.argv[1])/"docnorm/src"), str(Path(sys.argv[1])/"docsearch")]
+import docnorm.engine, docsearch, onnxruntime, openpyxl
+onnxruntime.disable_telemetry_events()
+from docnorm.adapters import local_markitdown
+from _docsearch_text import TextProcessor
+from _docsearch_models import SearchConfig
+sqlite3.connect(":memory:").execute("CREATE VIRTUAL TABLE probe USING fts5(text)")
+p = TextProcessor(SearchConfig()); assert p.lemma("ошибки") == "ошибка"; p.close()
+assert "Probe" in local_markitdown(b"<html><body><h1>Probe</h1></body></html>", ".html")
+'''
+    subprocess.run([str(python), "-I", "-c", probe, str(root)],
+                   check=True, env=pip_env(), stdout=sys.stderr)
+
+
 def checked(path):
     if any(p.is_symlink() for p in (path, *path.parents)):
         raise ValueError(f"symlink path forbidden: {path}")
@@ -78,27 +103,7 @@ def main(root):
                         "--only-binary=:all:", "--require-hashes", "--find-links", str(bundle / "wheelhouse"),
                         "-r", str(lockfile)], check=True, env=env, stdout=sys.stderr)
         subprocess.run([python, "-I", "-m", "pip", "check"], check=True, env=env, stdout=sys.stderr)
-        probe = '''
-import os, socket, sys, sqlite3
-from pathlib import Path
-def denied(*args, **kwargs):
-    raise RuntimeError("local-docs: provisioning probe network access forbidden")
-socket.socket.connect = denied
-socket.socket.connect_ex = denied
-socket.create_connection = denied
-socket.getaddrinfo = denied
-os.environ["ORT_DISABLE_TELEMETRY"] = "1"
-sys.path[:0] = [str(Path(sys.argv[1])/"docnorm/src"), str(Path(sys.argv[1])/"docsearch")]
-import docnorm.engine, docsearch, onnxruntime, openpyxl
-onnxruntime.disable_telemetry_events()
-from docnorm.adapters import local_markitdown
-from _docsearch_text import TextProcessor
-from _docsearch_models import SearchConfig
-sqlite3.connect(":memory:").execute("CREATE VIRTUAL TABLE probe USING fts5(text)")
-p = TextProcessor(SearchConfig()); assert p.lemma("ошибки") == "ошибка"; p.close()
-assert "Probe" in local_markitdown(b"<html><body><h1>Probe</h1></body></html>", ".html")
-'''
-        subprocess.run([python, "-I", "-c", probe, str(root)], check=True, env=env, stdout=sys.stderr)
+        validate_environment(python, root)
         temporary = checked(state / "ready.tmp")
         with temporary.open("x", encoding="utf-8") as out:
             out.write(json.dumps(identity, sort_keys=True))

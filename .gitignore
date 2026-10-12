@@ -16,6 +16,7 @@ dist/
 # Local offline provisioning
 /.local-docs-env/
 /.local-docs-install.lock/
+/.local-docs-setup.lock/
 
 # Raw documentation downloads (not distributable source code)
 /drive-download-*/

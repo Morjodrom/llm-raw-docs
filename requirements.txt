@@ -1,0 +1,2 @@
+# Shared pinned dependencies for docnorm, docsearch, and development tests.
+-r LLM-docs/distribution/requirements.lock

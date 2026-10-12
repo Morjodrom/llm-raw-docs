@@ -107,7 +107,7 @@ def main():
         for path in sorted((root / "docsearch").iterdir()):
             if path.is_file() and path.suffix == ".py":
                 add(path)
-        for relative in ("local-docs.sh", "LLM-docs/local-docs.sh", "LLM-docs/build-distribution.sh",
+        for relative in ("local-docs.sh", "setup.sh", "requirements.txt", "LLM-docs/local-docs.sh", "LLM-docs/build-distribution.sh",
                          "LLM-docs/README.md", "LLM-docs/.gitignore", ".gitignore",
                          "docnorm/README.md", "docnorm/AGENTS.md", "docnorm/pyproject.toml", "docnorm/requirements.lock",
                          "docsearch/README.md", "docsearch/AGENTS.md", "docsearch/requirements.txt",

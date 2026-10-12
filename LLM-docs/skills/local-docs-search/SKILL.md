@@ -7,12 +7,16 @@ description: Search and quote local documentation exports offline using docnorm 
 
 Run commands from the repository root (or use the absolute script path). Read
 [the workflow guide](../../README.md) for setup, reports, recovery, and limitations.
-Use the root `local-docs.sh` launcher for distributed bundles; it provisions a
-shared environment offline from included wheels on first use. In the source
-repository, `LLM-docs/local-docs.sh` also supports pre-provisioned tool environments.
-Resolve the bundle root from this skill location and invoke its script by absolute
-path when the working directory is elsewhere. Read `INSTALL.md` at the bundle
-root for Python/platform prerequisites and first-use provisioning.
+Use the root `local-docs.sh` launcher for both Git checkouts and ZIP bundles.
+For a Git checkout, `bash setup.sh` explicitly installs root `requirements.txt`
+into one shared `.venv` using the network; this is one-time provisioning, not a
+research step. Do not perform remote installation while answering document
+questions: if setup is missing or stale, report it and request explicit setup.
+ZIP first-use provisioning remains offline from included wheels. The internal
+`LLM-docs/local-docs.sh` still supports pre-provisioned legacy environments.
+Resolve the project root from this skill location and invoke its launcher by
+absolute path when the working directory is elsewhere. Read root `ReadMe.md`
+for Git setup or `INSTALL.md` / `LLM-docs/distribution/INSTALL.md` for ZIP setup.
 
 1. Select the export folder explicitly. The current example is
    `drive-download-20261012T111012Z-1-001/`; never assume future names. If the

@@ -17,10 +17,11 @@ path and your question; ask it to read root `AGENTS.md` and load the
 
 The assistant checks the snapshot, updates when needed, searches, reads full
 sections and parent context, then answers with provenance-based citations and
-coverage warnings. For a source clone, use `LLM-docs/local-docs.sh` with the
-shared development environment configured as described in the repository README;
-no ZIP build is required. For a ZIP (or a checkout with a built wheelhouse), use
-the root `local-docs.sh` launcher. All document operations remain offline;
+coverage warnings. In a Git clone, run `bash setup.sh` once to install the
+root `requirements.txt` into a shared `.venv`; no activation, variable exports or
+ZIP build is required. Use root `./local-docs.sh` for both Git and ZIP workflows.
+Git runtime never installs packages; a missing/outdated environment requires
+explicit setup. ZIP provisioning remains offline from its included wheels. All document operations remain offline;
 your assistant/model has its own connectivity and privacy policy. Retrieved
 excerpts may leave your machine through that assistant, so choose an approved
 or local model for confidential exports. If skill discovery is unavailable,
@@ -46,16 +47,16 @@ wrapper remains supported for development. Existing environments are never zippe
 
 ## Manual CLI usage (alternative)
 
-From the repository root, with the existing environments:
+From the repository root after `bash setup.sh`, or from an extracted ZIP:
 
 ```bash
 EXPORT=./drive-download-20261012T111012Z-1-001
-LLM-docs/local-docs.sh update --input "$EXPORT"
+./local-docs.sh update --input "$EXPORT"
 # This example returns 1: conversion gaps are reported, but indexing completes.
-LLM-docs/local-docs.sh status --input "$EXPORT"
-LLM-docs/local-docs.sh search --input "$EXPORT" 'ошибки подключения' --limit 5
+./local-docs.sh status --input "$EXPORT"
+./local-docs.sh search --input "$EXPORT" 'ошибки подключения' --limit 5
 # Copy an actual section_id from results:
-LLM-docs/local-docs.sh read --input "$EXPORT" SECTION_ID
+./local-docs.sh read --input "$EXPORT" SECTION_ID
 # Likewise read a returned parent_section_id for context, if non-null.
 ```
 
@@ -72,9 +73,9 @@ remain untouched and require a new update in the new namespace. The original sib
 Additional searches (JSON by default):
 
 ```bash
-LLM-docs/local-docs.sh search --input "$EXPORT" 'подключение таймаут' --match any
-LLM-docs/local-docs.sh search --input "$EXPORT" --mode literal -- '--db'
-LLM-docs/local-docs.sh search --input "$EXPORT" 'body:"connection error" OR heading:network' --mode advanced
+./local-docs.sh search --input "$EXPORT" 'подключение таймаут' --match any
+./local-docs.sh search --input "$EXPORT" --mode literal -- '--db'
+./local-docs.sh search --input "$EXPORT" 'body:"connection error" OR heading:network' --mode advanced
 ```
 
 Arguments following the input pass through to the existing search/read CLI;
@@ -83,7 +84,7 @@ Arguments following the input pass through to the existing search/read CLI;
 is FTS5 syntax without lemmatization. `--limit` defaults to 10 (range 1–1000).
 Read sections before quoting them. Search results can include verbose provenance.
 
-## Development provisioning (separate from runtime)
+## Legacy two-environment provisioning (optional)
 
 Requires Bash 3.2+, Python >=3.11,<3.15, SQLite FTS5, and the pinned tool
 requirements, including local Russian dictionaries. Defaults use

@@ -36,6 +36,16 @@ All document operations are offline. Installation is also offline in the ZIP;
 the Python socket guard is defense-in-depth, not an OS sandbox for arbitrary code.
 No source documents are bundled or modified.
 
+## Git clone alternative
+
+For a source checkout, run `bash setup.sh` once. It installs root `requirements.txt`
+from PyPI into `.venv`; no wheelhouse, ZIP build, activation or exports are needed.
+Then use the same root `./local-docs.sh` commands. Git runtime only checks readiness
+and never downloads dependencies. This source setup does not impose the ZIP's
+macOS/ARM64 check; other POSIX platforms still need compatible pinned wheels and
+are not claimed tested. The default ZIP route above remains entirely offline;
+do not run online setup merely to use the ZIP.
+
 ## Edit and redistribute
 
 Edit `docnorm/src/`, `docsearch/`, the workflow, or the canonical skill at

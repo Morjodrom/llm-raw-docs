@@ -160,7 +160,8 @@ def test_provisioning_errors_and_recovery(installed):
     module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
     # Test FTS5 failure on the actual launcher check body, without changing Python.
     checker = (bundle / "LLM-docs/distribution/python.sh").read_text()
-    body = checker.split(' -I -c \'', 1)[1].rsplit("' || return 2", 1)[0]
+    body = checker.split(' -I -c \'', 1)[1].rsplit("' \"$mode\" || return 2", 1)[0]
+    body = "import sys; sys.argv.append('zip')\n" + body
     code = "import sqlite3\ndef unavailable(*args): raise RuntimeError('FTS5 unavailable')\nsqlite3.connect=unavailable\n" + body
     probe = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True)
     assert probe.returncode != 0 and "SQLite FTS5" in probe.stderr
