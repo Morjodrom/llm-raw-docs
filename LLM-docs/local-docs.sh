@@ -4,8 +4,6 @@ set -euo pipefail
 ROOT=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
 NORM_PY=${DOCNORM_PYTHON:-"$ROOT/docnorm/.venv/bin/python"}
 SEARCH_PY=${DOCSEARCH_PYTHON:-"$ROOT/docsearch/.venv/bin/python"}
-HELPER="$ROOT/LLM-docs/scripts/workflow_state.py"
-OFFLINE="$ROOT/LLM-docs/scripts/offline_cli.py"
 usage() {
     cat <<'EOF'
 Usage: local-docs.sh COMMAND --input EXPORT_DIRECTORY [docsearch arguments]
@@ -44,36 +42,7 @@ done
 [[ -x "$SEARCH_PY" ]] || fail "missing executable $SEARCH_PY; provision docsearch offline (see README)"
 export PYTHONDONTWRITEBYTECODE=1 PYTHONNOUSERSITE=1
 unset PYTHONPATH PYTHONSTARTUP
-state=$("$SEARCH_PY" "$HELPER" locate "$ROOT" "$input")
 if [[ $command == update ]]; then
     [[ -x "$NORM_PY" ]] || fail "missing executable $NORM_PY; provision docnorm offline (see README)"
-    mkdir -p -- "$state"
-else
-    [[ -f "$state/ready.json" && -f "$state/search.sqlite" ]] || fail "no completed snapshot; run update --input first"
 fi
-# Serialize both reads and writes so no wrapper query sees a half-updated collection.
-mkdir -- "$state/.lock" 2>/dev/null || fail "collection busy or interrupted lock: $state/.lock (see README)"
-trap 'rmdir -- "$state/.lock"' EXIT
-trap 'exit 130' INT
-trap 'exit 143' TERM
-if [[ $command == update ]]; then
-    # On fatal/interrupt, old DB may remain but cannot be searched through the wrapper.
-    rm -f -- "$state/ready.json"
-    norm_code=0
-    "$NORM_PY" "$OFFLINE" docnorm normalize "$input" --output "$state/normalized" > "$state/normalize-summary.json" || norm_code=$?
-    [[ $norm_code -le 1 ]] || fail "normalization failed (exit $norm_code); index not updated"
-    # docnorm omits documents/ for an empty collection; docsearch requires it.
-    mkdir -p -- "$state/normalized/documents"
-    index_code=0
-    "$SEARCH_PY" "$OFFLINE" docsearch index "$state/normalized" --db "$state/search.sqlite" --json > "$state/index-report.json" || index_code=$?
-    [[ $index_code -le 1 ]] || fail "indexing failed (exit $index_code); snapshot unavailable"
-    "$SEARCH_PY" "$HELPER" ready "$ROOT" "$input" "$norm_code" "$index_code"
-    if [[ $norm_code -ne 0 || $index_code -ne 0 ]]; then
-        printf 'local-docs: snapshot available, but partial; inspect status and normalization_report before relying on coverage\n' >&2
-        exit 1
-    fi
-elif [[ $command == status ]]; then
-    "$SEARCH_PY" "$HELPER" status "$ROOT" "$input"
-else
-    "$SEARCH_PY" "$OFFLINE" docsearch "$command" --db "$state/search.sqlite" --json "$@"
-fi
+exec "$SEARCH_PY" "$ROOT/LLM-docs/scripts/workflow_run.py" "$ROOT" "$command" "$input" "$@"

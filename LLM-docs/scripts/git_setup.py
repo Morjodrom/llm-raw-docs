@@ -28,6 +28,7 @@ def main():
     python = state / "bin/python"
     identity = {"root": str(root), "python": os.path.realpath(sys.executable), "version": sys.version,
                 "requirements": sha(checked(root / "requirements.txt")),
+                "drive_lock": sha(checked(root / "LLM-docs/scripts/drive-requirements.lock")),
                 "lock": sha(checked(root / "LLM-docs/distribution/requirements.lock"))}
     previous = None
     if ready.is_file():
