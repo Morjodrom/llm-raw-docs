@@ -1,9 +1,0 @@
-# Source-only connector dependencies; ZIP dependencies are unchanged.
-google-auth==2.40.3
-google-auth-oauthlib==1.2.2
-cachetools==5.5.2
-pyasn1==0.6.1
-pyasn1-modules==0.4.2
-rsa==4.9.1
-oauthlib==3.3.1
-requests-oauthlib==2.0.0
